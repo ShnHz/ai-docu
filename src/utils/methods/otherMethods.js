@@ -2,36 +2,11 @@
  * @Author: sanghangning 
  * @Date: 2019-12-11 11:23:58 
  * @Last Modified by: sanghangning
- * @Last Modified time: 2020-05-26 14:25:18
+ * @Last Modified time: 2022-05-09 14:57:07
  */
+import router from '../../router'
 
 export default {
-    /**
-     * 节流
-     */
-    mixin_throttle(fn, interval = 300) {
-        let canRun = true;
-        return function () {
-            if (!canRun) return;
-            canRun = false;
-            setTimeout(() => {
-                fn.apply(this, arguments);
-                canRun = true;
-            }, interval);
-        };
-    },
-    /**
-     * 防抖
-     */
-    mixin_debounce(fn, interval = 300) {
-        let timeout = null;
-        return function () {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => {
-                fn.apply(this, arguments);
-            }, interval);
-        };
-    },
     /**
      * 粘贴至剪剪贴板
      * 
@@ -117,27 +92,43 @@ export default {
         });
     },
     /**
-     * 向左平滑滚动
-     * @param {String} id 
-     * @param {Number} length
-     * 滑动元素需要加上scroll-behavior: smooth; 
+     * 将查询参数映射到url上
      */
-    scrollPrev(id, length = 200) {
-        document.getElementById(id).scrollTo({
-            left: document.getElementById(id).scrollLeft -= length,
-            behavior: 'smooth' // 平滑滚动
+    urlPushParams(route, params) {
+        let query = {}
+        for (let key in params) {
+            if (Object.prototype.toString.call(params[key]).slice(8, -1) === 'Array') {
+                query[key] = `-ary-[${params[key].join(',')}]`
+            } else {
+                query[key] = params[key]
+            }
+        }
+        router.push({
+            ...route,
+            query: {
+                ...route.query,
+                ...query
+            }
         })
     },
     /**
-     * 向右平滑滚动
-     * @param {String} id 
-     * @param {Number} length 
-     * 滑动元素需要加上scroll-behavior: smooth; 
+     * 获取url上的查询参数，并转换为对应类型
      */
-    scrollNext(id, length = 200) {
-        document.getElementById(id).scrollTo({
-            left: document.getElementById(id).scrollLeft += length,
-            behavior: 'smooth' // 平滑滚动
-        })
+    urlGetParams(query) {
+        let params = {}
+        for (let key in query) {
+            if (query[key]) {
+                if (query[key].includes('-ary-')) {
+                    let arrStr = query[key].match(/\[(.+?)\]/)
+                    params[key] = arrStr ? arrStr[0].replace(/\[|]/g, '').split(',') : []
+                } else if (new RegExp(/^\d{1,}$/).test(query[key])) {
+                    params[key] = parseInt(query[key])
+                } else {
+                    params[key] = query[key]
+                }
+            }
+        }
+
+        return params
     }
 }

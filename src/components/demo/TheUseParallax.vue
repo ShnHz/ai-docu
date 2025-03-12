@@ -33,15 +33,13 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-::v-deep {
-  .the-parallax-wrap {
-    width: 500px;
-    height: 500px;
-    overflow: hidden;
-    background: #fff;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
-  }
+::v-deep(.the-parallax-wrap) {
+  width: 500px;
+  height: 500px;
+  overflow: hidden;
+  background: #fff;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
 }
 </style>

@@ -2,7 +2,7 @@
  * @Author: sanghangning 
  * @Date: 2019-12-11 15:05:36 
  * @Last Modified by: sanghangning
- * @Last Modified time: 2021-06-04 15:09:44
+ * @Last Modified time: 2022-10-09 15:50:10
  */
  
 <template>
@@ -76,7 +76,7 @@ export default {
   color: rgba(0, 0, 0, 0.65);
   line-height: 22px;
   text-align: center;
-  ::v-deep .empty-image {
+  ::v-deep(.empty-image) {
     margin-bottom: 8px;
     p {
       width: 100%;

@@ -2,15 +2,16 @@
  * @Author: sanghangning 
  * @Date: 2019-12-11 10:48:31 
  * @Last Modified by: sanghangning
- * @Last Modified time: 2021-08-10 17:57:08
+ * @Last Modified time: 2021-08-13 18:28:46
  */
 
 /**
  * 接口域名的管理
  */
 const base = {
-    url: process.env.VUE_APP_API_URL,
-    api: `${process.env.VUE_APP_API_URL}/api`,
+    url: import.meta.env.VITE_APP_API_URL,
+    api: `${import.meta.env.VITE_APP_API_URL}/api`,
+    local: `http://localhost:6201`
 }
 
 export default base;

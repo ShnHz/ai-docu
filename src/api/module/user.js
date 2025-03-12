@@ -1,26 +1,45 @@
-/*
- * @Author: sanghangning 
- * @Date: 2019-12-11 10:48:41 
- * @Last Modified by: sanghangning
- * @Last Modified time: 2021-06-02 14:10:06
- */
-
 import base from '../base'; // 导入接口域名列表
-import axios from '@/plugins/local/axios'; // 导入创建的axios实例
 
 const user = {
-    // // 心跳包
-    // keepAlive(params) {
-    //     return axios.post(`${base.api}/keep_alive/`, params);
-    // },
-    // // 退出登录
-    // logout(params) {
-    //     return axios.post(`${base.api}/logout/`, params);
-    // },
-    // // 获取用户信息    
-    // getUserInfo(params) {
-    //     return axios.post(`${base.api}/user_info/`, params);
-    // }
+    // 心跳包
+    keepAlive(params) {
+        return window.$vueApp.config.globalProperties.$http.post(`${base.api_admin}/keep_alive/`, params, {
+            nprogress: false
+        });
+    },
+    // 登录
+    login(params){
+        return window.$vueApp.config.globalProperties.$http.post(`${base.api_admin}/login/`, params, {});
+    },
+    // 退出登录
+    logout(params) {
+        return window.$vueApp.config.globalProperties.$http.post(`${base.api_admin}/logout/`, params, {});
+    },
+    // 获取用户信息    
+    getUserInfo(params) {
+        return window.$vueApp.config.globalProperties.$http.post(`${base.api_admin}/user_info/`, params, {
+            nprogress: false
+        });
+    },
+    // 获取导航栏信息
+    getNavInfo(params) {
+        return window.$vueApp.config.globalProperties.$http.get(`${base.api_admin}/menu/`, {
+            params: params,
+            nprogress: false
+        });
+    },
+    // 获取用户列表    
+    getUserList(params) {
+        return window.$vueApp.config.globalProperties.$http.post(`${base.api_admin}/user_list/`, params, {
+            nprogress: false
+        });
+    },
+    // 修改用户信息    
+    setUserInfo(params) {
+        return window.$vueApp.config.globalProperties.$http.post(`${base.api_admin}/update_info/`, params, {
+            nprogress: false
+        });
+    }
 }
 
 export default user;

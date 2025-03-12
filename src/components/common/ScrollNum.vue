@@ -23,8 +23,6 @@
 </template>
 
 <script>
-import { useCssVar } from '@vueuse/core'
-
 export default {
   name: 'ScrollNum',
   props: {

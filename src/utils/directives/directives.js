@@ -1,13 +1,13 @@
 export default {
     // v-focus 当页面加载时，该元素将获得焦点
     focus: {
-        inserted: function (el) {
+        created: function (el) {
             el.focus()
         }
     },
     // v-enterFloat 只能输入指定位数的小数 <input type="text" v-enterFloat:2 />
     enterFloat: {
-        bind: function (el, binding = 2) {
+        mounted: function (el, binding = 2) {
             el.handler = function () {
                 if (binding.arg) {
                     let str = el.value
@@ -41,26 +41,26 @@ export default {
             }
             el.addEventListener('keyup', el.handler)
         },
-        unbind: function (el) {
+        unmounted: function (el) {
             el.removeEventListener('keyup', el.handler)
         }
     },
     // v-enterNumber 只能输入正整数 <input type="text" v-enterNumber />
     enterNumber: {
-        bind: function (el) {
+        mounted: function (el) {
             el.handler = function () {
                 el.value = el.value.replace(/\D+/, '')
                 el.dispatchEvent(new Event('input'))
             }
             el.addEventListener('keyup', el.handler)
         },
-        unbind: function (el) {
+        unmounted: function (el) {
             el.removeEventListener('keyup', el.handler)
         }
     },
     // v- 骨架屏
     skeleton: {
-        bind: function (el, blinding) {
+        mounted: function (el, blinding) {
             if (el.style.position == 'static' || el.style.position == '') {
                 el.style.position = 'relative'
             }

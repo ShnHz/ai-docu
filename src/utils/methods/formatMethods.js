@@ -2,7 +2,7 @@
  * @Author: sanghangning 
  * @Date: 2019-12-11 11:23:58 
  * @Last Modified by: sanghangning
- * @Last Modified time: 2021-08-12 11:18:06
+ * @Last Modified time: 2022-05-11 15:19:17
  */
 
 export default {
@@ -20,38 +20,12 @@ export default {
         return sdata.join('&')
     },
     /**
-     * 将对象用&连接,包括数组
-     * 
-     * @param {Object} paramObj 对象值
-     * @return {String}
-     */
-    formatObject(paramObj, token = true, arrayBrackets = false) {
-        let exportUrl = ''
-        Object.keys(paramObj).map((key) => {
-            if (Array.isArray(paramObj[key])) {
-                if (arrayBrackets) {
-                    exportUrl += key + '=' + JSON.stringify(paramObj[key]) + '&';
-                } else {
-                    exportUrl += key + '=' + JSON.stringify(paramObj[key]).replace(/\[/g, '').replace(/\]/g, '').replace(/\"/g, '') + '&';
-                }
-            } else {
-                exportUrl += key + '=' + encodeURIComponent(paramObj[key]) + '&';
-            }
-        })
-
-        if (token) {
-            exportUrl += 'token=' + this.$store.state.userinfo.token
-        }
-
-        return exportUrl
-    },
-    /**
      * 将对象转为FormData,包括数组
      * 
      * @param {Object} paramObj 对象值
      * @return {String}
      */
-    formatFormData(paramObj, arrayBrackets = false, encodeURI = true) {
+    formatFormData(paramObj, arrayBrackets = true, encodeURI = false) {
         let formData = new FormData
         Object.keys(paramObj).map((key) => {
             if (Array.isArray(paramObj[key])) {
