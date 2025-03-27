@@ -7,10 +7,7 @@
     <!-- <a-avatar :size="commonState.collapsed ? 36 : 50">
       <img alt="avatar" :src="avatar" />
     </a-avatar> -->
-    <div
-      class="user-info-wrap"
-      @click="test"
-    >
+    <div class="user-info-wrap">
       <h3>Hi,{{ commonState.userInfo.username }}</h3>
       <p>nice to meet you!</p>
     </div>
@@ -30,11 +27,7 @@
         return this.commonState.getUserAvatar
       },
     },
-    methods: {
-      test() {
-        this.$api.moonshot.getMessage()
-      },
-    },
+    methods: {},
   }
 </script>
 <style lang="scss" scoped>

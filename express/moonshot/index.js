@@ -2,26 +2,67 @@ const bodyParser = require('body-parser')
 const { createFile } = require('../utils/utils_createFile.js')
 const OpenAI = require('openai')
 const { moonshotKey } = require('../../config.js')
+const fs = require('fs')
+const multer = require('multer')
+const { Readable } = require('stream')
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const dir = './express/uploads/'
+    fs.mkdirSync(dir, { recursive: true }) // 确保目录存在
+    cb(null, dir)
+  },
+  filename: (req, file, cb) => {
+    // 生成唯一文件名（避免冲突）
+    const uniqueName = `${Date.now()}-${file.originalname}`
+    cb(null, uniqueName)
+  },
+})
+const upload = multer({ storage })
 
 module.exports = function (app) {
   // get 是否服务器已存在文件
-  app.get('/moonshot/get', bodyParser.json(), async (req, res) => {
+  app.post('/moonshot/get', upload.single('file'), async (req, res) => {
     try {
-      const { modalName } = req.query
+      const { file } = req
+
+      // 现在文件可以通过 req.file 获取
+      if (!req.file) {
+        return res
+          .status(400)
+          .json({ success: false, message: 'No file uploaded' })
+      }
 
       const client = new OpenAI({
         apiKey: moonshotKey,
         baseURL: 'https://api.moonshot.cn/v1',
       })
+
+      const filePath = req.file.path
+
+      // 使用 fs.createReadStream 读取文件流
+      const readStream = fs.createReadStream(filePath)
+
+      const file_object = await client.files.create({
+        file: readStream, // 使用 buffer
+        purpose: 'file-extract',
+      })
+
+      let file_content = await (
+        await client.files.content(file_object.id)
+      ).text()
+
       const completion = await client.chat.completions.create({
-        model: 'moonshot-v1-8k',
+        model: 'moonshot-v1-32k',
         messages: [
           {
             role: 'system',
-            content:
-              '你是 Kimi，由 Moonshot AI 提供的人工智能助手，你更擅长中文和英文的对话。你会为用户提供安全，有帮助，准确的回答。同时，你会拒绝一切涉及恐怖主义，种族歧视，黄色暴力等问题的回答。Moonshot AI 为专有名词，不可翻译成其他语言。',
+            content: file_content,
+          },
+          {
             role: 'user',
-            content: '你好，我叫李雷，1+1等于多少？',
+            content:
+              '请将这篇文献分段总结，每一段总结的开始要用“【第一部分】”这样的格式著明，而每一点则要用“（第1小点）”这样的格式著明（获得全文结构）',
           },
         ],
         temperature: 0.3,
@@ -30,6 +71,7 @@ module.exports = function (app) {
       res.json({
         success: true,
         data: completion.choices[0].message,
+        originText: file_content,
       })
     } catch (e) {
       console.log(e)

@@ -1,32 +1,25 @@
-import {
-  createRouter,
-  createWebHistory
-} from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 
 import useCommonState from '@pinia/modules/common.js'
 
 import common from './routers/common'
 import template from './routers/template'
+import ai from './routers/ai'
 
 import NProgress from 'nprogress'
 NProgress.configure({
-  showSpinner: false
-}); // NProgress Configuration
+  showSpinner: false,
+}) // NProgress Configuration
 
-
-let routes = [
-  ...common,
-  ...template
-]
+let routes = [...common, ...template, ...ai]
 
 const router = createRouter({
-  history: createWebHistory(
-    import.meta.env.VITE_APP_NAME),
+  history: createWebHistory(import.meta.env.VITE_APP_NAME),
   routes,
   scrollBehavior(to, from, savedPosition) {
     // 始终滚动到顶部
     return {
-      top: 0
+      top: 0,
     }
   },
 })
@@ -42,7 +35,7 @@ router.beforeEach((to, from, next) => {
       name: 'Login',
       query: {
         ...to.query,
-        redirect: to.name
+        redirect: to.name,
       },
     })
   }
