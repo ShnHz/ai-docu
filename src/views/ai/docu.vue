@@ -124,46 +124,48 @@
         this.loading = false
 
         function buildTreeFromText(text) {
-          const lines = text.split('\n').filter((line) => line.trim() !== '')
-          console.log(lines)
+          const cleanedText = text
+            .replace(/\n/g, '')
+            .replace(/\s+/g, ' ')
+            .replaceAll(/【/g, '[')
+            .replaceAll(/】/g, ']')
+            .replaceAll(/（/g, '(')
+            .replaceAll(/）/g, ')')
+          console.error(cleanedText)
           const treeData = []
+          let parentIndex = 0
           let currentParent = null
 
-          lines.forEach((line) => {
-            const parentMatch = line.match(/【(第\d+部分)】\s*(.*)/)
-            if (parentMatch) {
-              // 创建新的父节点
+          // 匹配英文括号的正则表达式
+          const nodeRegex =
+            /(?:\[(第\d+部分)\]\s*([^[\(]*))|(?:\((第\d+小点)\)\s*([^[\(]*))/g
+
+          let match
+          while ((match = nodeRegex.exec(cleanedText)) !== null) {
+            if (match[1]) {
+              // 父节点
               currentParent = {
-                title: `${parentMatch[1]} ${parentMatch[2].trim()}`,
-                key: `${treeData.length}-0`,
+                title: `${match[1].trim()} ${match[2].trim()}`,
+                key: `0-${parentIndex}`,
                 children: [],
               }
               treeData.push(currentParent)
-              return
-            }
+              parentIndex++
+            } else if (match[3]) {
+              // 子节点
+              if (!currentParent) continue
 
-            const childMatch = line.match(/（(第\d+小点)）\s*(.*)/)
-            if (childMatch && currentParent) {
-              // 创建子节点
               const child = {
-                title: `${childMatch[1]} ${childMatch[2].trim()}`,
+                title: `${match[3].trim()} ${match[4].trim()}`,
                 key: `${currentParent.key}-${
                   currentParent.children.length + 1
                 }`,
               }
               currentParent.children.push(child)
             }
-          })
+          }
 
-          // 生成符合示例的key格式
-          return treeData.map((parent, pIndex) => ({
-            ...parent,
-            key: `0-${pIndex}`,
-            children: parent.children.map((child, cIndex) => ({
-              ...child,
-              key: `0-${pIndex}-${cIndex + 1}`,
-            })),
-          }))
+          return treeData
         }
       },
       handleOpenOriginText() {
