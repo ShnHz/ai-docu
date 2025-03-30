@@ -12,6 +12,7 @@
     "serves": "node ./express/index.js"
   },
   "dependencies": {
+    "@kangc/v-md-editor": "2.3.15",
     "@vueuse/core": "^8.9.1",
     "@vueuse/shared": "^10.1.2",
     "axios": "^1.4.0",

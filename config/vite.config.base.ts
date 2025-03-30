@@ -65,5 +65,8 @@ export default defineConfig({
         javascriptEnabled: true,
       }
     }
-  }
+  },
+  optimizeDeps: {
+    include: ['@kangc/v-md-editor/lib/theme/vuepress.js'],
+  },
 });
