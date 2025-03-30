@@ -40,7 +40,10 @@
         <template v-else>开始分析</template>
       </a-button>
 
-      <div class="tab-wrap" v-if="data.articleAnalysis && data.articleAnalysis.length > 0">
+      <div
+        class="tab-wrap"
+        v-if="data.articleAnalysis && data.articleAnalysis.length > 0"
+      >
         <a-tabs
           v-model:activeKey="activeTab"
           position="left"
@@ -49,10 +52,23 @@
         >
           <a-tab-pane
             v-for="(item, index) in data.articleAnalysis"
-            :key="`article-analysis-item-${index}`"
+            :key="item.title"
             :title="item.title"
           >
-            <md-editor :content="item.content" />
+            <a-split
+              :style="{
+                height: '100%',
+                width: '100%',
+                border: '1px solid var(--color-border)',
+              }"
+            >
+              <template #first>
+                <md-editor :content="item.content1" />
+              </template>
+              <template #second>
+                <md-editor :content="item.content2" />
+              </template>
+            </a-split>
           </a-tab-pane>
         </a-tabs>
       </div>
@@ -86,6 +102,7 @@
         activeTab: '',
         params: {
           file: null,
+          fileName: '',
           analysisTitles: [],
         },
         drawer: {
@@ -117,6 +134,7 @@
             return
           }
           this.params.file = file
+          this.params.fileName = file.name
           onProgress(1)
           onSuccess()
         } catch (e) {
@@ -142,10 +160,15 @@
       async step1() {
         const form = new FormData()
         form.append('file', this.params.file)
+        form.append('fileName', this.params.fileName)
 
-        const res = await this.$api.moonshot.getMessage(form)?.data
-        this.drawer.drawerOriginText.data = JSON.parse(res.originText)
-        this.data.articleAnalysis = res.data
+        const res = await this.$api.moonshot.getMessage(form)
+        this.drawer.drawerOriginText.data = JSON.parse(res.data.originText)
+        this.data.articleAnalysis = res.data.data
+        if (this.data.articleAnalysis && this.data.articleAnalysis.length > 0) {
+          this.activeTab = this.data.articleAnalysis[0].title
+          console.log(this.activeTab)
+        }
         // this.analysisTitles = buildTreeFromText(res.data.content) || []
 
         function buildTreeFromText(text) {
@@ -247,6 +270,12 @@
           height: 100%;
           .arco-tabs-content {
             overflow-y: auto;
+          }
+          .arco-tabs-content-item{
+            height: 100%;
+            .arco-split-trigger-vertical{
+              height: auto;
+            }
           }
         }
       }
