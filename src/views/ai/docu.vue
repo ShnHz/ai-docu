@@ -269,10 +269,11 @@
         :deep(.arco-tabs) {
           height: 100%;
           .arco-tabs-content {
-            overflow-y: auto;
+            width: calc(100vw - 280px - 48px - 96px);
           }
           .arco-tabs-content-item{
-            height: 100%;
+            height: 500px;
+            overflow-y: auto;
             .arco-split-trigger-vertical{
               height: auto;
             }
